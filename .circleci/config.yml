@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  build-tools: circleci/build-tools@2.9.1
+
 parameters:
   xcode_version:
     type: string
@@ -59,6 +62,7 @@ commands:
     description: Commands to run for setup of every set of tests
     steps:
       - checkout
+      - build-tools/merge-with-parent
       - run:
           command: rm ~/.ssh/id_rsa
           name: Remove old SSH key
