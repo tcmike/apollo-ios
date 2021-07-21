@@ -33,6 +33,9 @@ let package = Package(
     .package(
       url: "https://github.com/daltoniam/Starscream",
       .upToNextMinor(from: "3.1.1")),
+    .package(
+      url: "https://github.com/mattt/InflectorKit",
+      .upToNextMinor(from: "1.0.0")),
     ],
     targets: [
       .target(
@@ -47,6 +50,7 @@ let package = Package(
       name: "ApolloCodegenLib",
       dependencies: [
         "ApolloCore",
+        "InflectorKit",
       ]),
     .target(
       name: "ApolloSQLite",
