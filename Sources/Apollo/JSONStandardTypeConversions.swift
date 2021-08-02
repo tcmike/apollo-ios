@@ -17,6 +17,12 @@ extension String: JSONDecodable, JSONEncodable {
   }
 }
 
+extension NSString: JSONEncodable {
+  public var jsonValue: JSONValue {
+    return (self as String).jsonValue
+  }
+}
+
 extension Int: JSONDecodable, JSONEncodable {
   public init(jsonValue value: JSONValue) throws {
     guard let number = value as? NSNumber else {
