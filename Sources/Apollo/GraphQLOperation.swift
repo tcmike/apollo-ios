@@ -1,5 +1,5 @@
 public enum GraphQLOperationType {
-  case query
+  case query(skipParsing: Bool = false)
   case mutation
   case subscription
 }
@@ -34,7 +34,7 @@ public extension GraphQLOperation {
 
 public protocol GraphQLQuery: GraphQLOperation {}
 public extension GraphQLQuery {
-  var operationType: GraphQLOperationType { return .query }
+  var operationType: GraphQLOperationType { return .query() }
 }
 
 public protocol GraphQLMutation: GraphQLOperation {}

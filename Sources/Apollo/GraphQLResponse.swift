@@ -7,11 +7,13 @@ public final class GraphQLResponse<Data: GraphQLSelectionSet> {
 
   private var rootKey: String
   private var variables: GraphQLMap?
-
+  private var operationType: GraphQLOperationType
+    
   public init<Operation: GraphQLOperation>(operation: Operation, body: JSONObject) where Operation.Data == Data {
     self.body = body
     rootKey = rootCacheKey(for: operation)
     variables = operation.variables
+    operationType = operation.operationType
   }
   
   func setupOperation<Operation: GraphQLOperation> (_ operation: Operation) {
@@ -80,6 +82,16 @@ public final class GraphQLResponse<Data: GraphQLSelectionSet> {
     let extensions = body["extensions"] as? JSONObject
 
     if let dataEntry = body["data"] as? JSONObject {
+      if case let .query(skipParsing) = operationType, skipParsing {
+          return GraphQLResult(
+            data: Data(unsafeResultMap: dataEntry),
+            extensions: extensions,
+            errors: errors,
+            source: .server,
+            dependentKeys: nil
+          )
+      }
+        
       let data = try decode(selectionSet: Data.self,
                             from: dataEntry,
                             variables: variables)
