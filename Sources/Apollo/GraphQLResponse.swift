@@ -22,13 +22,22 @@ public final class GraphQLResponse<Data: GraphQLSelectionSet> {
   }
 
   func parseResult(cacheKeyForObject: CacheKeyForObject? = nil) throws -> (GraphQLResult<Data>, RecordSet?) {
-    let errors: [GraphQLError]?
-
-    if let errorsEntry = body["errors"] as? [JSONObject] {
-      errors = errorsEntry.map(GraphQLError.init)
-    } else {
-      errors = nil
-    }
+      let errors: [GraphQLError]? = {
+          if let errorsEntry = body["errors"] as? [JSONObject] {
+              if let extendedErrors = errorsEntry.first?["extensions"] as? JSONObject {
+                  for error in extendedErrors {
+                      if error.key == "messageForUser", let message = error.value as? String {
+                          return [GraphQLError.init(message)]
+                      }
+                  }
+              }
+              
+            return errorsEntry.map(GraphQLError.init)
+              
+          } else {
+            return nil
+          }
+      }()
 
     let extensions = body["extensions"] as? JSONObject
 
