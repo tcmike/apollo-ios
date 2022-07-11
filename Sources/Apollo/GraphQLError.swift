@@ -21,6 +21,10 @@ public struct GraphQLError: Error {
 
   /// A description of the error.
   public var message: String? {
+    if let messageForUser = extensions?["messageForUser"] as? String {
+        return messageForUser
+    }
+      
     return self["message"] as? String
   }
 
