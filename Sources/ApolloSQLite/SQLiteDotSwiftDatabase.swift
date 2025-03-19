@@ -5,6 +5,7 @@ import Apollo
 import SQLite
 
 public final class SQLiteDotSwiftDatabase: SQLiteDatabase {
+    typealias Expression = SQLite.Expression
   private var db: Connection!
   
   private let records: Table
