@@ -56,8 +56,19 @@ public struct JSONResponseParsingInterceptor: ApolloInterceptor {
       let graphQLResponse = GraphQLResponse(operation: request.operation, body: body)
       createdResponse.legacyResponse = graphQLResponse
 
-
-      let result = try parseResult(from: graphQLResponse, cachePolicy: request.cachePolicy)
+      let result: GraphQLResult<Operation.Data>
+        if case let .query(skipParsing) = request.operation.operationType, skipParsing {
+            result = GraphQLResult<Operation.Data>.init(
+              data: Operation.Data(unsafeResultMap: body),
+              extensions: nil,
+              errors: nil,
+              source: .server,
+              dependentKeys: nil
+          )
+      } else {
+        result = try parseResult(from: graphQLResponse, cachePolicy: request.cachePolicy)
+      }
+        
       createdResponse.parsedResponse = result
       chain.proceedAsync(request: request,
                          response: createdResponse,
